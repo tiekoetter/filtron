@@ -1,9 +1,12 @@
 # Filtron
 
-Reverse HTTP proxy to filter requests by different rules.
-Can be used between production webserver and the application server to prevent abuse of the application backend.
+Reverse HTTP proxy to filter requests by different rules.  Can be used between
+production webserver and the application server to prevent abuse of the
+application backend.
 
-The original purpose of this program was to defend [SearXNG](https://searxng.github.com/searxng/), but it can be used to guard any web application.
+The original purpose of this program was to defend
+[SearXNG](https://searxng.github.io/searxng/), but it can be used to guard any
+web application.
 
 
 ## Installation and setup
@@ -20,14 +23,18 @@ A rule has two required attributes: `name` and `actions`
 
 A rule can contain all of the following attributes:
 
- - `limit` integer - Defines how many matching requests allowed to access the application within `interval` seconds. (Can be omitted if `0`)
- - `interval` integer - Time range in seconds to reset rule numbers (Can be omitted if `limit` is `0`)
- - `filters` list of selectors
- - `aggregations` list of selectors (if `filters` specified it activates only in case of the filter matches)
- - `subrules` list of rules (if `filters` specified it activates only in case of the filter matches)
- - `disabled` bool - Disable a rule (default is `false`)
- - `stop` bool - Finish request validation immediately and skip remaining rules (default is `false`)
-
+- `limit` integer - Defines how many matching requests allowed to access the
+  application within `interval` seconds. (Can be omitted if `0`)
+- `interval` integer - Time range in seconds to reset rule numbers (Can be
+  omitted if `limit` is `0`)
+- `filters` list of selectors
+- `aggregations` list of selectors (if `filters` specified it activates only in
+  case of the filter matches)
+- `subrules` list of rules (if `filters` specified it activates only in case of
+  the filter matches)
+- `disabled` bool - Disable a rule (default is `false`)
+- `stop` bool - Finish request validation immediately and skip remaining rules
+  (default is `false`)
 
 JSON representation of a rule:
 
@@ -45,7 +52,11 @@ JSON representation of a rule:
      ]
 }
 ```
-Explanation: Allow only 10 requests a minute where `q` represented as GET parameter and the user agent header starts with `curl`. Request is logged to STDERR and blocked with a custom error message if limit is exceeded. See more examples [here](https://github.com/searxng/filtron/blob/master/example_rules.json).
+
+Explanation: Allow only 10 requests a minute where `q` represented as GET
+parameter and the user agent header starts with `curl`. Request is logged to
+STDERR and blocked with a custom error message if limit is exceeded. See more
+examples [here](https://github.com/searxng/filtron/blob/master/example_rules.json).
 
 
 ### `actions`
@@ -57,56 +68,67 @@ Note: Only the rule's first action will be executed that serves custom response
 #### Currently implemented actions
 
 ##### `log`
+
 Log the request
 
 ##### `block`
+
 Serve HTTP 429 response instead of passing the request to the application
 
 ##### `shell `
-Execute a shell command. `cmd` (string) and `args` (list of selectors) are required params (Example: `{"name": "shell", "params": {"cmd": "echo %v is the IP", "args": ["IP"]}}`)
+
+Execute a shell command. `cmd` (string) and `args` (list of selectors) are
+required params (Example: `{"name": "shell", "params": {"cmd": "echo %v is the
+IP", "args": ["IP"]}}`)
 
 
 ### `filters`
 
-If all the selectors found, it increments a counter. Rule blocks the request if counter reaches `limit`
-
+If all the selectors found, it increments a counter. Rule blocks the request if
+counter reaches `limit`
 
 ### `aggregations`
 
-Counts the values returned by selectors. Rule blocks the request if any value's number reaches `limit`
+Counts the values returned by selectors. Rule blocks the request if any value's
+number reaches `limit`
 
 ### `subrules`
 
-Each rule can contain any number of subrules. Activates on parent rule's filter match.
+Each rule can contain any number of subrules. Activates on parent rule's filter
+match.
 
 
 ## Selectors
 
 Request's different parts can be extracted using selector expressions.
 
-Selectors are strings that can match any attribute of a HTTP request with the following syntax:
+Selectors are strings that can match any attribute of a HTTP request with the
+following syntax:
 
 ```
 [!]RequestAttribute[:SubAttribute][=Expression]
 ```
 
- - `!` can negate the selector
- - `RequestAttribute` (required) selects specific part of a request - possible values:
-    - Single value
-      - `IP`
-      - `Host`
-      - `Path`
-      - `Method`
-    - Multiple values
-      - `GET`
-      - `POST`
-      - `Param` - it is an alias for both `GET` and `POST`
-      - `Cookie`
-      - `Header`
- - `SubAttribute` if `RequestAttribute` is not a single value, this can specify the inner attribute
- - `Expression` possible value:
-    - a regular expression to filter the selected attribute values.
-    - `nslookup(Hostname)` to filter the selected attribute values with the IP addresses of `Hostname`. Filtron resolves `Hostname` to its IP addresses when the rule is loaded (IPv4 and IPv6).
+- `!` can negate the selector
+- `RequestAttribute` (required) selects specific part of a request - possible values:
+   - Single value
+     - `IP`
+     - `Host`
+     - `Path`
+     - `Method`
+   - Multiple values
+     - `GET`
+     - `POST`
+     - `Param` - it is an alias for both `GET` and `POST`
+     - `Cookie`
+     - `Header`
+- `SubAttribute` if `RequestAttribute` is not a single value, this can specify
+  the inner attribute
+- `Expression` possible value:
+   - a regular expression to filter the selected attribute values.
+   - `nslookup(Hostname)` to filter the selected attribute values with the IP
+     addresses of `Hostname`. Filtron resolves `Hostname` to its IP addresses
+     when the rule is loaded (IPv4 and IPv6).
 
 
 ### Examples
@@ -119,13 +141,14 @@ Selectors are strings that can match any attribute of a HTTP request with the fo
 
 `Path=^/(x|y)$` matches if the path is `/x` or `/y`
 
-`IP=nslookup(example.com)` matches if the client's IP address is one of the IP addresses of example.com.
+`IP=nslookup(example.com)` matches if the client's IP address is one of the IP
+addresses of example.com.
 
 
 ## API
 
-Filtron can be configured through its REST API which listens on `127.0.0.1:4005` by default.
-
+Filtron can be configured through its REST API which listens on `127.0.0.1:4005`
+by default.
 
 ### API endpoints
 
