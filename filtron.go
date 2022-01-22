@@ -17,7 +17,7 @@ func main() {
 	listen := flag.String("listen", "127.0.0.1:4004", "Proxy listen address")
 	apiAddr := flag.String("api", "127.0.0.1:4005", "API listen address")
 	ruleFile := flag.String("rules", "rules.json", "JSON rule list")
-	readBufferSize := flag.Int("read-buffer-size", 16*1024, "Read buffer size")
+	readBufferSize := flag.Int("read-buffer-size", 65*1024, "Read buffer size")
 	printVersionInfo := flag.Bool("version", false, "Version information")
 	flag.Parse()
 
