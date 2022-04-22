@@ -1,4 +1,4 @@
-APP_NAME=filtron
+APP_NAME=dalf/filtron
 
 build:
 	docker rmi -f $(APP_NAME):latest
@@ -6,8 +6,7 @@ build:
 
 run:
 	@echo "\n /!\ DO NOT use in production\n"
-	docker run --rm -t -i --net=host --name="$(APP_NAME)" $(APP_NAME) --target 127.0.0.1:8888
+	docker run --rm -t -i --net=host --name="filtron" $(APP_NAME) --target 127.0.0.1:8888
 
 push: build
-	docker push dalf/filtron
-
+	docker push $(APP_NAME)
