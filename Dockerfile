@@ -4,7 +4,7 @@ RUN apk --no-cache add ca-certificates \
     && adduser -D -h /usr/local/filtron -s /bin/false -u 10001 filtron filtron
 
 # STEP 2: build executable binary
-FROM golang:1.17-alpine as builder
+FROM golang:1.18-alpine as builder
 
 WORKDIR $GOPATH/src/github.com/searxng/filtron
 
@@ -18,7 +18,7 @@ RUN gofmt -l ./
 # RUN go test -v ./...
 RUN CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -tags timetzdata .
 
-RUN wget -O /rules.json https://raw.githubusercontent.com/searxng/searxng-docker/master/rules.json
+RUN wget -O /rules.json https://raw.githubusercontent.com/searxng/searxng-docker/filtron-morty/rules.json
 
 # STEP 3: build the image including only the binary
 FROM scratch
