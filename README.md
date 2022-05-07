@@ -12,7 +12,7 @@ web application.
 ## Installation and setup
 
 ```
-$ go get github.com/searxng/filtron
+$ go install github.com/searxng/filtron@latest
 $ "$GOPATH/bin/filtron" --help
 ```
 
